@@ -1,0 +1,1 @@
+Minimal files for text analysis coding practice group.  

@@ -1,0 +1,144 @@
+---
+title: "API Basics"
+author: "Christina Maimone"
+date: "5/15/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Other Resources
+
+This file has just the basics to get you started.  There are many good resources available in the world.  A few of them:
+
+* https://campus.datacamp.com/courses/working-with-web-data-in-r/
+* Examples of using the `rtweet` package: https://rud.is/books/21-recipes/?utm_content=buffer7a82b&utm_medium=social&utm_source=twitter.com&utm_campaign=buffer
+* `httr` vignette: https://cran.r-project.org/web/packages/httr/vignettes/quickstart.html
+
+# Setup
+
+`httr` is the main package for making web requests.  `jsonlite` helps you work with JSON data -- what's returned by many APIs.  `tidyverse` because it's convenient.
+
+```{r}
+library(httr)
+library(jsonlite)
+library(tidyverse)
+```
+
+
+# Example without authentication
+
+[Deck of Cards API](https://deckofcardsapi.com/)
+
+```{r}
+baseurl <- "https://deckofcardsapi.com/api/deck"
+```
+
+First thing we need to do is get a deck.  We get one deck by calling https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1.  Let's put together the URL with `paste` (we don't want to have to type the base url all of the time)
+
+```{r}
+newdeckurl <- paste(baseurl, "new/shuffle/?deck_count=1", sep="/")
+```
+
+Now call it and save the response
+
+```{r}
+response <- GET(newdeckurl)
+str(response)
+```
+
+We get back a response object with headers, content, and lots of other stuff.  Right now, we need the content:
+
+```{r}
+response$content
+```
+
+Hmmm...what is that?  It's data, not now how we want to read it.  Use the `content()` function instead:
+
+```{r}
+content(response)
+```
+
+Ahh! That looks better.  Now, to get cards, we need that `deck_id`.  Let's draw 2 cards.  And this time, we can use the query option to add the count value to the end of the url.  The URL we need to construct is https://deckofcardsapi.com/api/deck/<<deck_id>>/draw/?count=2
+
+```{r}
+deckinfo <- content(response)
+cardsresponse <- GET(paste(baseurl, deckinfo$deck_id, "draw/", sep="/"), query=list(count="2"))
+content(cardsresponse)
+```
+
+We've got kind of a mess of data there.  How do we get it into a format that's useful?  We can use `fromJSON` 
+
+```{r}
+fromJSON(content(cardsresponse, as="text"))
+```
+
+This is a little better -- there's a data frame in there -- the `cards` element of the list:
+
+```{r}
+cards <- fromJSON(content(cardsresponse, as="text"))$cards
+cards
+```
+
+That's something we can work with.  Although while it looks like a normal flat dataframe, there's actually a dataframe within a dataframe:
+
+```{r}
+str(cards)
+```
+
+Let's flatten this.  It's tricky in a few ways.  We want to use the flatten function from jsonlite.  But when we loaded the tidyverse above, it told us: `## ✖ purrr::flatten() masks jsonlite::flatten()`.  So we specify which function we want the flatten function from.
+
+```{r}
+cards <- fromJSON(content(cardsresponse, as="text"))$cards %>% jsonlite::flatten(recursive=TRUE)
+str(cards)
+```
+
+You can use flatten as an option to `fromJSON`, but then it will flatten everything, not just the `cards` dataframe part.  
+
+But that other info can be important too -- like how many cards are remaining, and out deck ID number.  
+
+Draw some more cards from the same deck and add them to the `cards` data frame.
+
+```{r}
+cardsresponse <- GET(paste(baseurl, deckinfo$deck_id, "draw/", sep="/"), query=list(count=5))
+cards <- bind_rows(cards, jsonlite::flatten(fromJSON(content(cardsresponse, as="text"))$cards, recursive=TRUE))
+cards
+```
+
+Or, instead of flattening each time we call, we could store a list of draws, and then pull out the parts we want later:
+
+```{r}
+drawCards <- function(n, deck) {
+  cr <- GET(paste(baseurl, deck, "draw/", sep="/"), query=list(count=n))
+  fromJSON(content(cr, as="text"))
+}
+draws <- map(c(5,3,2), drawCards, deck=deckinfo$deck_id) # do draws of 5, 3, 2
+str(draws)
+```
+
+Now we have a list of lists of lists. How to get this out?
+
+```{r}
+cards <- map(draws, "cards") %>% # get the cards data frame from each response (each list element)
+  map(jsonlite::flatten, recursive=TRUE) %>% # flatten each of those data frames
+  bind_rows() # stack them together
+cards
+```
+
+
+What happens if we ask for more cards than there are left?
+
+```{r}
+cardsresponse <- GET(paste(baseurl, deckinfo$deck_id, "draw/", sep="/"), query=list(count=50))
+cardsresponse
+```
+
+Status is 200, which means OK.  So what happened?
+
+```{r}
+content(cardsresponse)
+```
+
+All the way down at the bottom, after the cards, in that extra info, we find an error that there were not enough cards.  The success field is also false.  This could be easy to miss if you aren't checking for it.
