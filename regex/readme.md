@@ -43,9 +43,9 @@ Obligatory regex humor: http://www.rexegg.com/regex-humor.html#xkcd
 
 ## Exercises/Practice
 
-[HackerRank Regular Expression Challenges](https://www.hackerrank.com/domains/regex/re-introduction): starts easy and builds up
+[HackerRank Regular Expression Challenges](https://www.hackerrank.com/domains/regex): starts easy and builds up
 
-[Regex Crossword](https://regexcrossword.com/): fill in crossword puzzles with regular expressions that match the clues; exercises range from beginner to super advanced expert
+[Regex Crossword](https://regexcrossword.com/): fill in crossword puzzles with text that matches the regular expression clues; exercises range from beginner to super advanced expert
 
 [Regex Golf](https://alf.nu/RegexGolf): these get complicated fairly quickly; still fun and useful if you don't worry too much about the points
 
