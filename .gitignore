@@ -1,0 +1,10 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+.idea/
+
+.ipynb_checkpoints
+
+bookreviews/venv/

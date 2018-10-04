@@ -1,0 +1,67 @@
+What is an API
+Why use one
+
+How web works
+clients and servers
+applications running on server listening for requests
+get and post requests
+responses - header, content
+
+General framework
+- make a request to a URL, specifying info in the url and possibly in the header - either directory or parameters
+- get a response back - response codes, response content
+- do something with that data
+
+How to get data?  structure of the url (different endpoints), and setting parameters in the url
+
+What do you get back
+- html response
+- content: JSON, XML
+
+Most basic: 
+- https://deckofcardsapi.com/
+
+boilerplate files for R, Python
+
+Python: requests, json
+R: httr, jsonlite
+
+
+
+Twitter: You need a twitter account.  You can make a separate one for collection, or use your existing one.  Then go to https://apps.twitter.com/app/new and fill in the application.  You do need to supply a valid URL; you should be able to put anything here though.  If you have questions, we can do this together, as you get access instantly.
+
+Reddit: You need an account.  Go to https://www.reddit.com/prefs/apps/ and click the little button that says “Are you a developer?  Create an app…”  Fill in the details (pick script for the type).  A redirect uri is required; enter any valid web address for now.  Then register at http://bit.ly/2H7vheG.  For use case, enter something about research; for developer platform, enter web application; for oauth client id — get the id from the app you created first (the numbers/letters at the top under the name, NOT the secret key)
+
+
+Python: twitter (https://pypi.org/project/twitter/), tweepy (http://tweepy.readthedocs.io/en/v3.6.0/#)
+R: rtweet, twitteR
+
+
+Authorization
+- oauth -- difference between general public access (personal access for yourself) and access on behalf of someone else
+- other types of authentication
+
+applying for access
+> creating an application
+> entering a web site
+
+Rate limiting, other limits
+
+
+Best practices:
+- don't hard code authorization information and tokens into code -- at least if you're going to share it; can save in separate file and read it in
+- keep a log of what you've requested and successfully retrieved
+- write error processing functions
+- write results to file vs. having to recall -- can reprocess later if you save data
+- use specialized wrapper packages when possible to make it easier
+
+
+Advanced:
+- Paging results/continuation
+
+
+https://github.com/atwel/ProgrammingTutorials
+http://httpbin.org/
+datasciencetoolkit.org
+
+https://opensource.com/article/17/6/collecting-and-mapping-twitter-data-using-r
