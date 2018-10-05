@@ -8,3 +8,13 @@
 .ipynb_checkpoints
 
 bookreviews/venv/
+bookreviews/pagedownloads/
+bookreviews/pagedownloads2/
+bookreviews/reviewdownloads/
+bookreviews/reviewdownloads2/
+bookreviews/resul*
+
+*.Rproj
+
+
+bookreviews/resultdata.csv
