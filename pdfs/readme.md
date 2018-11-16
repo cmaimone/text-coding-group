@@ -99,6 +99,8 @@ Another good walk-through: https://medium.com/@CharlesBordet/how-to-extract-and-
 
 There may be other packages.
 
+For tables specifically, tabulizer for tables: https://github.com/ropensci/tabulizer
+
 
 ### Tesseract for OCR
 
