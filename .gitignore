@@ -18,3 +18,13 @@ bookreviews/resul*
 
 
 bookreviews/resultdata.csv
+
+dictionaries/Feinstein/
+*/__MACOSX/
+
+sagelist.txt
+
+tokens/evanston311.csv
+tokens/spacy_example.ipynb
+
+pdfs/dhhs/
